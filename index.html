@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>赣南师范大学 · 校园通行卡</title>
+<style>
+:root {
+  --g1:#1b4332; --g2:#2d6a4f; --g3:#40916c; --g4:#52b788;
+  --gp:#d8f3dc; --gb:#e8f5e9; --w:#fff; --r:20px;
+  --sh:0 2px 16px rgba(0,0,0,0.05);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:linear-gradient(170deg,#e8f5e9 0%,#d0ecd6 25%,#b8dfc4 50%,#d0ecd6 75%,#e8f5e9 100%);
+  background-attachment:fixed;
+  font-family:-apple-system,'PingFang SC','Segoe UI',system-ui,sans-serif;
+  padding:16px 12px 44px;min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-font-smoothing:antialiased;
+}
+.ct{max-width:430px;margin:0 auto}
+
+/* Header */
+.hd{text-align:center;padding:6px 0 4px;animation:fd .5s ease}
+.hd .sch{font-size:56px;line-height:1;filter:drop-shadow(0 4px 10px rgba(27,67,50,.18))}
+.hd h1{font-size:28px;font-weight:800;color:var(--g1);letter-spacing:1px}
+.hd .en{font-size:11px;color:var(--g3);letter-spacing:2px;margin-top:2px}
+.hd .tag{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:20px;
+  background:rgba(45,106,79,.12);font-size:12px;color:var(--g2);font-weight:600}
+
+/* Cards */
+.cd{
+  background:rgba(255,255,255,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-radius:var(--r);padding:16px 16px;margin-bottom:12px;
+  box-shadow:var(--sh);border:1px solid rgba(255,255,255,.65);
+  animation:fu .45s ease backwards;
+}
+.cd:nth-child(2){animation-delay:.04s}
+.cd:nth-child(3){animation-delay:.08s}
+.cd:nth-child(4){animation-delay:.12s}
+.cd:nth-child(5){animation-delay:.16s}
+.cd .tt{
+  font-size:15px;font-weight:700;color:var(--g1);margin-bottom:12px;
+  display:flex;align-items:center;gap:7px;
+}
+
+/* Profile */
+.pf{text-align:center;padding:18px 16px}
+.pf .av{
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g2),var(--g4));
+  margin:0 auto 10px;display:flex;align-items:center;justify-content:center;
+  font-size:28px;color:#fff;box-shadow:0 6px 18px rgba(45,106,79,.25);
+}
+.pf .nm{font-size:20px;font-weight:700;color:var(--g1);margin-bottom:6px}
+.pf .wx{
+  display:inline-flex;align-items:center;gap:6px;background:var(--gb);
+  border-radius:24px;padding:9px 16px;cursor:pointer;transition:all .18s;
+  user-select:none;-webkit-user-select:none;margin-bottom:4px;
+}
+.pf .wx:active{background:var(--g2);color:#fff;transform:scale(.96)}
+.pf .wx:active .wxi{color:#fff}
+.pf .wxi{font-size:14px;font-weight:600;color:var(--g2);transition:color .18s}
+.pf .sbtn{
+  display:inline-block;margin-top:10px;padding:8px 20px;border-radius:20px;
+  border:1.5px dashed rgba(45,106,79,.3);background:transparent;
+  color:var(--g2);font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .18s;font-family:inherit;
+}
+.pf .sbtn:active{background:var(--gb);transform:scale(.96)}
+
+/* Profile Edit */
+.edm{display:none;margin-top:10px;text-align:left}
+.edm.open{display:block}
+.edm input{
+  width:100%;padding:12px 14px;border:1.5px solid rgba(45,106,79,.2);
+  border-radius:14px;font-size:14px;outline:none;margin-bottom:8px;
+  font-family:inherit;background:#fff;transition:border .2s;
+}
+.edm input:focus{border-color:var(--g2);box-shadow:0 0 0 3px rgba(45,106,79,.06)}
+.edm .eb{display:flex;gap:8px}
+.edm .eb button{
+  flex:1;padding:10px;border-radius:20px;border:none;font-size:14px;
+  font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;
+}
+.edm .esave{background:var(--g2);color:#fff}
+.edm .esave:active{background:var(--g1);transform:scale(.96)}
+.edm .ecancel{background:rgba(45,106,79,.08);color:var(--g2)}
+.edm .ecancel:active{background:rgba(45,106,79,.2)}
+
+/* Buttons */
+.bt{
+  width:100%;padding:13px;border:none;border-radius:26px;font-size:15px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:all .16s;
+  text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.bt1{background:var(--g2);color:#fff;box-shadow:0 4px 12px rgba(45,106,79,.2)}
+.bt1:active{background:var(--g1);transform:scale(.96)}
+.bt2{background:rgba(45,106,79,.07);color:var(--g2);border:1px solid rgba(45,106,79,.2);margin-top:12px}
+.bt2:active{background:var(--g2);color:#fff;transform:scale(.96)}
+.bt3{
+  background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;
+  box-shadow:0 4px 12px rgba(255,107,53,.25);
+}
+.bt3:active{transform:scale(.96);opacity:.9}
+
+/* Service Grid */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sb{
+  display:flex;align-items:center;gap:10px;padding:13px 12px;border:none;
+  border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .16s;font-family:inherit;text-align:left;
+  user-select:none;-webkit-user-select:none;
+}
+.sb .si{font-size:22px;flex-shrink:0}
+.sb .sl{line-height:1.4}
+.sp{background:var(--g2);color:#fff;box-shadow:0 3px 10px rgba(45,106,79,.2)}
+.sp:active{background:var(--g1);transform:scale(.95)}
+.ss{background:rgba(45,106,79,.07);color:var(--g1);border:1px solid rgba(45,106,79,.1)}
+.ss:active{background:var(--g2);color:#fff;transform:scale(.95)}
+
+/* Ad banner */
+.ad{
+  background:linear-gradient(135deg,#fff8f0,#fff3e6);
+  border:1px solid rgba(255,107,53,.2);
+  border-radius:16px;padding:12px 14px;margin-top:10px;
+  display:flex;align-items:center;gap:10px;
+}
+.ad .ad-icon{font-size:28px;flex-shrink:0}
+.ad .ad-text{flex:1;font-size:13px;color:#5a3e2b;line-height:1.5}
+.ad .ad-text strong{color:#e06a1f}
+.ad .ad-copy{
+  flex-shrink:0;padding:8px 14px;border-radius:18px;border:none;
+  background:#ff6b35;color:#fff;font-size:12px;font-weight:700;
+  cursor:pointer;font-family:inherit;transition:all .15s;
+}
+.ad .ad-copy:active{background:#d45a2b;transform:scale(.95)}
+
+/* Contacts */
+.cl{list-style:none;display:none;margin-top:10px}
+.cl.open{display:block}
+.cl li{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 2px;border-bottom:1px solid rgba(0,0,0,.04);
+}
+.cl li:last-child{border-bottom:none}
+.cl .dept{font-size:13px;font-weight:600;color:var(--g1)}
+.cl .tel{
+  font-size:13px;color:var(--g2);background:var(--gb);padding:5px 10px;
+  border-radius:16px;cursor:pointer;font-weight:500;transition:all .15s;
+  font-family:'SF Mono',Menlo,monospace;white-space:nowrap;user-select:none;
+}
+.cl .tel:active{background:var(--g2);color:#fff}
+
+/* Footer */
+.ft{
+  text-align:center;font-size:11px;color:rgba(45,106,79,.4);
+  margin-top:16px;line-height:2;animation:fu .45s ease .2s backwards;
+}
+
+/* Toast */
+.to{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-8px);
+  background:var(--g1);color:#fff;padding:10px 22px;border-radius:24px;
+  font-size:13px;font-weight:600;z-index:9999;pointer-events:none;
+  box-shadow:0 10px 32px rgba(27,67,50,.3);
+  opacity:0;transition:opacity .22s,transform .22s;
+}
+.to.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Animations */
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fd{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="ct">
+
+<!-- Header -->
+<div class="hd">
+  <div class="sch">🎓</div>
+  <h1>赣南师范大学</h1>
+  <div class="en">GANNAN NORMAL UNIVERSITY</div>
+  <div class="tag">📳 NFC校园通行卡</div>
+</div>
+
+<!-- Profile -->
+<div class="cd pf" id="profileCard">
+  <div class="av" id="pAv">👤</div>
+  <div class="nm" id="pName">点击下方设置你的信息</div>
+  <div class="wx" id="pWxRow" onclick="copyWechat()">
+    <span>💬</span><span class="wxi" id="pWx">未设置微信</span><span style="font-size:11px;opacity:.5">📋</span>
+  </div>
+  <div style="font-size:11px;color:var(--g3);margin-top:4px" id="pTip">👆 点击复制微信号</div>
+  <button class="sbtn" onclick="toggleEdit()" id="editBtn">✏️ 设置我的名字和微信</button>
+  <div class="edm" id="editPanel">
+    <input type="text" id="eName" placeholder="你的名字（如：张三）">
+    <input type="text" id="eWechat" placeholder="你的微信号（如：wxid_abc123）">
+    <div class="eb">
+      <button class="ecancel" onclick="toggleEdit()">取消</button>
+      <button class="esave" onclick="saveProfile()">✅ 保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Campus Network -->
+<div class="cd">
+  <div class="tt">🌐 校园网</div>
+  <button class="bt bt1" onclick="go('http://10.10.90.2')">🔗 跳转校园网认证页面</button>
+  <button class="bt bt2" onclick="go('https://v.douyin.com/-ZRNyrexM_o/')">📖 校园网连接教程（抖音）</button>
+  <div class="ad">
+    <span class="ad-icon">📡</span>
+    <div class="ad-text">
+      <strong>校园卡/网络办理</strong><br>微信号：Jing44667788
+    </div>
+    <button class="ad-copy" onclick="copy('Jing44667788');toast('✅ 已复制微信号：Jing44667788')">📋 复制</button>
+  </div>
+  <div style="font-size:11px;color:var(--g3);text-align:center;margin-top:10px;line-height:1.6">
+    💡 连接宿舍WiFi后点<strong>跳转认证页面</strong>，输入学号和校园网密码即可上网<br>不会操作？点击上方<strong>连接教程</strong>
+  </div>
+</div>
+
+<!-- Services -->
+<div class="cd">
+  <div class="tt">📱 校园服务</div>
+  <div class="sg">
+    <button class="sb sp" onclick="go('https://office.chaoxing.com/front/third/apps/seat/index?wfw_token=hejVCgwTrXI2Tp6Kuj7DC&fidEnc=3fb13bf8c4950ec5&uid=342272015&wfwEnc=65E50F0AD0C909C6C80B396884BE3C16&wxAppid=wxc93f4f5f6b0f4183&mappId=7990390&code=ZcLNATHf&state=30013')">
+      <span class="si">📚</span><span class="sl">图书馆<br>座位预约</span>
+    </button>
+    <button class="sb sp" onclick="go('https://jwgl.gnnu.edu.cn/xtgl/index_initMenu.html?jsdm=xs&_t=1783792516597&echarts=1')">
+      <span class="si">📋</span><span class="sl">教务系统<br><small style="opacity:.7">成绩·选课·课表</small></span>
+    </button>
+    <button class="sb ss" onclick="go('http://gnnuhwr.cloud:83/')">
+      <span class="si">🛠️</span><span class="sl">寝室报修</span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.gnnu.edu.cn')">
+      <span class="si">🏫</span><span class="sl">学校官网</span>
+    </button>
+    <button class="sb ss" onclick="go('https://v.douyin.com/OQw0qkbLc5E/')">
+      <span class="si">📅</span><span class="sl">学校校历<br><small style="opacity:.7">抖音</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.bilibili.com/opus/1202110717132537888?plat_id=186&share_from=dynamic&share_medium=android&share_plat=android&share_session_id=abe7620c-411b-423e-9e0c-899436a19494&share_source=WEIXIN&share_tag=s_i&spmid=dt.opus-detail.0.0&timestamp=1778734136&unique_k=y6jMIcT')">
+      <span class="si">🗺️</span><span class="sl">校园地图</span>
+    </button>
+    <button class="sb ss" onclick="go('https://m.kuaidi100.com/')">
+      <span class="si">📦</span><span class="sl">快递查询</span>
+    </button>
+    <button class="sb ss" onclick="go('https://m.weather.com.cn/weather/101240701.shtml')">
+      <span class="si">🌤️</span><span class="sl">赣州天气</span>
+    </button>
+    <button class="sb ss" onclick="go('https://cet.neea.edu.cn/')">
+      <span class="si">📝</span><span class="sl">四六级查分<br><small style="opacity:.7">CET成绩</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://lib.gnnu.edu.cn')">
+      <span class="si">📖</span><span class="sl">图书馆<br><small style="opacity:.7">馆藏检索</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.paperpass.com/')">
+      <span class="si">🔍</span><span class="sl">论文查重<br><small style="opacity:.7">PaperPass</small></span>
+    </button>
+    <button class="sb ss" onclick="toggleContacts()">
+      <span class="si">📞</span><span class="sl">校园通讯录</span>
+    </button>
+  </div>
+  <!-- Contacts -->
+  <ul class="cl" id="clist">
+    <li><span class="dept">教务处</span><span class="tel" onclick="call('0797-8898687')">0797-8898687</span></li>
+    <li><span class="dept">学生资助管理中心</span><span class="tel" onclick="call('0797-8898686')">0797-8898686</span></li>
+    <li><span class="dept">学生公寓管理中心</span><span class="tel" onclick="call('0797-8898640')">0797-8898640</span></li>
+    <li><span class="dept">保卫处</span><span class="tel" onclick="call('0797-8898682')">0797-8898682</span></li>
+    <li><span class="dept">校医院</span><span class="tel" onclick="call('0797-8898680')">0797-8898680</span></li>
+    <li><span class="dept">校医院急诊</span><span class="tel" onclick="call('0797-8898698')">0797-8898698</span></li>
+    <li><span class="dept">西苑1-9栋送水</span><span class="tel" onclick="call('181107976027')">18107976027</span></li>
+    <li><span class="dept">西苑10-15栋/南苑送水</span><span class="tel" onclick="call('181107976025')">18107976025</span></li>
+    <li><span class="dept">北苑送水</span><span class="tel" onclick="call('181107976019')">18107976019</span></li>
+    <li><span class="dept">校园卡/网络办理</span><span class="tel" onclick="call('178898357269')">17835357269</span></li>
+  </ul>
+</div>
+
+<!-- Tools -->
+<div class="cd">
+  <div class="tt">🛠️ 实用工具</div>
+  <div class="sg">
+    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn/merge_pdf')">
+      <span class="si">📄</span><span class="sl">PDF合并</span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn/compress_pdf')">
+      <span class="si">🗜️</span><span class="sl">PDF压缩</span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn/convert-pdf')">
+      <span class="si">🔄</span><span class="sl">PDF格式转换<br><small style="opacity:.7">互转Word/Excel/PPT</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn/edit-pdf')">
+      <span class="si">✂️</span><span class="sl">PDF编辑<br><small style="opacity:.7">添加文字·图片·标注</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.remove.bg/zh')">
+      <span class="si">🖼️</span><span class="sl">图片去背景<br><small style="opacity:.7">抠图·证件照换底色</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://convertio.co/zh/')">
+      <span class="si">🔀</span><span class="sl">万能格式转换<br><small style="opacity:.7">音视频·图片·文档</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://web.baimiaoapp.com/')">
+      <span class="si">📝</span><span class="sl">图片转文字<br><small style="opacity:.7">OCR识别·白描</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.gaoding.com/koutu')">
+      <span class="si">🎨</span><span class="sl">在线抠图<br><small style="opacity:.7">稿定设计</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.canva.cn/create/resumes/')">
+      <span class="si">📋</span><span class="sl">简历制作<br><small style="opacity:.7">Canva可画模板</small></span>
+    </button>
+    <button class="sb ss" onclick="go('https://www.wjx.cn/')">
+      <span class="si">📊</span><span class="sl">问卷制作<br><small style="opacity:.7">问卷星</small></span>
+    </button>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="ft">
+  📳 碰一碰NFC即可访问 · 赣南师范大学校园通行卡<br>
+  托管于 Gitee Pages · 更新文件即同步所有卡片
+</div>
+
+</div>
+
+<!-- Toast -->
+<div class="to" id="to"></div>
+
+<script>
+// ==================== Profile ====================
+var profile = {};
+try { profile = JSON.parse(localStorage.getItem('gnnu_profile')) || {}; } catch(e) {}
+
+function renderProfile() {
+  var name = profile.name || '';
+  var wx = profile.wechat || '';
+  if (name) {
+    document.getElementById('pName').textContent = name;
+    document.getElementById('pAv').textContent = name.charAt(0);
+  } else {
+    document.getElementById('pName').textContent = '点击下方设置你的信息';
+    document.getElementById('pAv').textContent = '👤';
+  }
+  if (wx) {
+    document.getElementById('pWx').textContent = wx;
+    document.getElementById('pTip').textContent = '👆 点击复制微信号，去微信添加好友';
+  } else {
+    document.getElementById('pWx').textContent = '未设置微信';
+    document.getElementById('pTip').textContent = '👆 设置后可点击复制';
+  }
+  document.getElementById('eName').value = name;
+  document.getElementById('eWechat').value = wx;
+  if (name || wx) {
+    document.getElementById('editBtn').textContent = '✏️ 修改我的信息';
+  }
+}
+
+function toggleEdit() {
+  var panel = document.getElementById('editPanel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    document.getElementById('eName').value = profile.name || '';
+    document.getElementById('eWechat').value = profile.wechat || '';
+    document.getElementById('eName').focus();
+  }
+}
+
+function saveProfile() {
+  var name = document.getElementById('eName').value.trim();
+  var wx = document.getElementById('eWechat').value.trim();
+  if (!name && !wx) { toast('⚠️ 请至少填写名字或微信号'); return; }
+  profile.name = name;
+  profile.wechat = wx;
+  localStorage.setItem('gnnu_profile', JSON.stringify(profile));
+  renderProfile();
+  document.getElementById('editPanel').classList.remove('open');
+  toast('✅ 信息已保存到本机');
+}
+
+function copyWechat() {
+  var wx = profile.wechat;
+  if (!wx) { toast('⚠️ 请先点击下方设置微信号'); toggleEdit(); return; }
+  copy(wx);
+  toast('✅ 微信号已复制：' + wx + '  打开微信粘贴即可添加');
+}
+
+// ==================== Contacts ====================
+function toggleContacts() {
+  var cl = document.getElementById('clist');
+  cl.classList.toggle('open');
+  if (cl.classList.contains('open')) {
+    cl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function call(tel) {
+  if (confirm('拨打：' + tel + ' ？')) {
+    window.location.href = 'tel:' + tel;
+  }
+}
+
+// ==================== Utils ====================
+function go(url) {
+  var w = window.open(url, '_blank');
+  if (!w || w.closed) toast('⚠️ 弹窗被拦截，请允许后重试', 2500);
+}
+
+function copy(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(function(){});
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+}
+
+var _tt;
+function toast(msg, dur) {
+  dur = dur || 2500;
+  var t = document.getElementById('to');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(function(){ t.classList.remove('show'); }, dur);
+}
+
+// ==================== Init ====================
+(function init() {
+  renderProfile();
+})();
+</script>
+</body>
+</html>
