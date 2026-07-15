@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="赣南师大通行卡">
+<meta name="format-detection" content="telephone=yes">
 <title>赣南师范大学 · 校园通行卡</title>
 <style>
 :root {
@@ -56,12 +60,10 @@ body{
 .pf .nm{font-size:20px;font-weight:700;color:var(--g1);margin-bottom:6px}
 .pf .wx{
   display:inline-flex;align-items:center;gap:6px;background:var(--gb);
-  border-radius:24px;padding:9px 16px;cursor:pointer;transition:all .18s;
+  border-radius:24px;padding:9px 16px;transition:all .18s;
   user-select:none;-webkit-user-select:none;margin-bottom:4px;
 }
-.pf .wx:active{background:var(--g2);color:#fff;transform:scale(.96)}
-.pf .wx:active .wxi{color:#fff}
-.pf .wxi{font-size:14px;font-weight:600;color:var(--g2);transition:color .18s}
+.pf .wxi{font-size:14px;font-weight:600;color:var(--g2)}
 .pf .sbtn{
   display:inline-block;margin-top:10px;padding:8px 20px;border-radius:20px;
   border:1.5px dashed rgba(45,106,79,.3);background:transparent;
@@ -169,12 +171,62 @@ body{
 }
 .to.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* Browser warning overlay */
+.bwo{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.6);z-index:9990;display:flex;
+  align-items:flex-end;justify-content:center;
+  animation:fd .3s ease;
+}
+.bwb{
+  background:#fff;border-radius:20px 20px 0 0;padding:28px 24px 36px;
+  width:100%;max-width:430px;text-align:center;
+  box-shadow:0 -8px 32px rgba(0,0,0,.15);
+  animation:fu .35s ease;
+}
+.bwb .bw-icon{font-size:48px;margin-bottom:12px}
+.bwb h3{font-size:19px;font-weight:800;color:#333;margin-bottom:8px}
+.bwb p{font-size:14px;color:#666;line-height:1.7;margin-bottom:20px}
+.bwb .bw-url{
+  display:block;background:#f5f5f5;border-radius:12px;padding:12px 14px;
+  font-size:13px;color:#1b4332;word-break:break-all;margin-bottom:16px;
+  border:1.5px dashed rgba(45,106,79,.3);font-family:'SF Mono',Menlo,monospace;
+}
+.bwb .bw-btns{display:flex;gap:10px;flex-wrap:wrap}
+.bwb .bw-btn{
+  flex:1;min-width:120px;padding:12px 16px;border-radius:24px;
+  border:none;font-size:14px;font-weight:700;cursor:pointer;
+  font-family:inherit;transition:all .15s;
+}
+.bwb .bw-primary{background:var(--g2);color:#fff;box-shadow:0 4px 12px rgba(45,106,79,.25)}
+.bwb .bw-primary:active{background:var(--g1);transform:scale(.96)}
+.bwb .bw-secondary{background:#f0f0f0;color:#555}
+.bwb .bw-secondary:active{background:#ddd;transform:scale(.96)}
+.bwb .bw-close{
+  display:block;margin:16px auto 0;background:none;border:none;
+  font-size:13px;color:#999;cursor:pointer;padding:8px;font-family:inherit;
+}
+/* Top banner for restricted browser */
+.bw-top{
+  position:fixed;top:0;left:0;right:0;z-index:9980;
+  background:linear-gradient(135deg,#ff6b35,#f7931e);
+  color:#fff;padding:12px 16px;text-align:center;
+  font-size:13px;font-weight:600;line-height:1.6;
+  animation:fd .4s ease;box-shadow:0 4px 16px rgba(255,107,53,.3);
+}
+.bw-top .bw-top-close{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:#fff;font-size:20px;
+  cursor:pointer;padding:4px 8px;opacity:.8;
+}
 /* Animations */
 @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fd{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
+<div id="bwOverlay" style="display:none"></div>
+<div id="bwTopBanner" style="display:none"></div>
 <div class="ct">
 
 <!-- Header -->
@@ -189,11 +241,10 @@ body{
 <div class="cd pf" id="profileCard">
   <div class="av" id="pAv">👤</div>
   <div class="nm" id="pName">点击下方设置你的信息</div>
-  <div class="wx" id="pWxRow" onclick="copyWechat()">
-    <span>💬</span><span class="wxi" id="pWx">未设置微信</span><span style="font-size:11px;opacity:.5">📋</span>
+  <div class="wx" id="pWxRow">
+    <span>💬</span><span class="wxi" id="pWx">未设置微信</span>
   </div>
-  <div style="font-size:11px;color:var(--g3);margin-top:4px" id="pTip">👆 点击复制微信号</div>
-  <button class="sbtn" onclick="toggleEdit()" id="editBtn">✏️ 设置我的名字和微信</button>
+  <button class="sbtn" onclick="toggleEdit()" id="editBtn">✏️ 设置个人信息</button>
   <div class="edm" id="editPanel">
     <input type="text" id="eName" placeholder="你的名字（如：张三）">
     <input type="text" id="eWechat" placeholder="你的微信号（如：wxid_abc123）">
@@ -281,17 +332,14 @@ body{
 <div class="cd">
   <div class="tt">🛠️ 实用工具</div>
   <div class="sg">
-    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn/merge_pdf')">
-      <span class="si">📄</span><span class="sl">PDF合并</span>
+    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn')">
+      <span class="si">📄</span><span class="sl">PDF工具合集<br><small style="opacity:.7">合并·压缩·转换·编辑</small></span>
     </button>
-    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn/compress_pdf')">
-      <span class="si">🗜️</span><span class="sl">PDF压缩</span>
+    <button class="sb ss" onclick="go('https://airportal.cn/')">
+      <span class="si">📡</span><span class="sl">跨设备传文件<br><small style="opacity:.7">AirPortal·隔空投送</small></span>
     </button>
-    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn/convert-pdf')">
-      <span class="si">🔄</span><span class="sl">PDF格式转换<br><small style="opacity:.7">互转Word/Excel/PPT</small></span>
-    </button>
-    <button class="sb ss" onclick="go('https://www.ilovepdf.com/zh-cn/edit-pdf')">
-      <span class="si">✂️</span><span class="sl">PDF编辑<br><small style="opacity:.7">添加文字·图片·标注</small></span>
+    <button class="sb ss" onclick="go('https://kkdaxue.com/')">
+      <span class="si">📖</span><span class="sl">专业学习建议<br><small style="opacity:.7">各专业前辈经验</small></span>
     </button>
     <button class="sb ss" onclick="go('https://www.remove.bg/zh')">
       <span class="si">🖼️</span><span class="sl">图片去背景<br><small style="opacity:.7">抠图·证件照换底色</small></span>
@@ -301,9 +349,6 @@ body{
     </button>
     <button class="sb ss" onclick="go('https://web.baimiaoapp.com/')">
       <span class="si">📝</span><span class="sl">图片转文字<br><small style="opacity:.7">OCR识别·白描</small></span>
-    </button>
-    <button class="sb ss" onclick="go('https://www.gaoding.com/koutu')">
-      <span class="si">🎨</span><span class="sl">在线抠图<br><small style="opacity:.7">稿定设计</small></span>
     </button>
     <button class="sb ss" onclick="go('https://www.canva.cn/create/resumes/')">
       <span class="si">📋</span><span class="sl">简历制作<br><small style="opacity:.7">Canva可画模板</small></span>
@@ -317,7 +362,7 @@ body{
 <!-- Footer -->
 <div class="ft">
   📳 碰一碰NFC即可访问 · 赣南师范大学校园通行卡<br>
-  托管于 Gitee Pages · 更新文件即同步所有卡片
+  托管于 GitHub Pages · 更新文件即同步所有卡片
 </div>
 
 </div>
@@ -326,6 +371,101 @@ body{
 <div class="to" id="to"></div>
 
 <script>
+// ==================== Browser Detection ====================
+var UA = navigator.userAgent || '';
+var isAlipay = /AlipayClient|AlipayDefined|APWebContainer/i.test(UA);
+var isWechat = /MicroMessenger/i.test(UA);
+var isQQ = /QQ\//i.test(UA) && !/MicroMessenger/i.test(UA);
+var isRestricted = isAlipay || isWechat || isQQ;
+
+// Restricted browser name
+function getBrowserName() {
+  if (isAlipay) return '支付宝';
+  if (isWechat) return '微信';
+  if (isQQ) return 'QQ';
+  return '';
+}
+
+// ==================== Browser Warning UI ====================
+function showTopBanner() {
+  var bn = getBrowserName();
+  var banner = document.getElementById('bwTopBanner');
+  banner.style.display = 'block';
+  banner.className = 'bw-top';
+  banner.innerHTML =
+    '<span>⚠️ 当前在<strong>' + bn + '</strong>内置浏览器中，部分功能可能受限</span>' +
+    '<span style="display:block;margin-top:4px;font-size:12px;font-weight:400">' +
+    '👉 点击右上角 ··· 选择<strong>「在浏览器中打开」</strong>即可获得完整体验</span>' +
+    '<button class="bw-top-close" onclick="dismissBanner()">×</button>';
+  // Push body content down
+  document.body.style.paddingTop = '80px';
+}
+
+function dismissBanner() {
+  var banner = document.getElementById('bwTopBanner');
+  banner.style.display = 'none';
+  document.body.style.paddingTop = '';
+}
+
+function showOverlay() {
+  var PAGE_URL = window.location.href;
+  var bn = getBrowserName();
+  var overlay = document.getElementById('bwOverlay');
+  overlay.style.display = 'block';
+  overlay.className = 'bwo';
+  overlay.innerHTML =
+    '<div class="bwb">' +
+      '<div class="bw-icon">🚀</div>' +
+      '<h3>在系统浏览器中打开</h3>' +
+      '<p>当前在<strong>' + bn + '</strong>中打开，部分功能无法正常使用。<br>建议用手机<strong>自带浏览器</strong>或<strong>Chrome/Safari</strong>打开。</p>' +
+      '<div class="bw-url">' + PAGE_URL + '</div>' +
+      '<div class="bw-btns">' +
+        '<button class="bw-btn bw-primary" onclick="copyPageUrl()">📋 复制链接</button>' +
+        '<button class="bw-btn bw-secondary" onclick="sharePage()">📤 分享给朋友</button>' +
+      '</div>' +
+      '<button class="bw-close" onclick="closeOverlay()">继续在' + bn + '中浏览（功能可能受限）</button>' +
+    '</div>';
+}
+
+function closeOverlay() {
+  document.getElementById('bwOverlay').style.display = 'none';
+  // Show top banner as persistent reminder
+  showTopBanner();
+}
+
+function copyPageUrl() {
+  copy(window.location.href);
+  toast('✅ 链接已复制！请打开手机自带浏览器（如Safari/Chrome），粘贴并访问');
+}
+
+function sharePage() {
+  var url = window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: '赣南师范大学校园通行卡', url: url }).catch(function(){});
+  } else {
+    copy(url);
+    toast('✅ 链接已复制！请发给朋友或在浏览器中打开');
+  }
+}
+
+// Ask user on first visit if in restricted browser
+var BW_KEY = 'gnnu_bw_dismissed';
+function checkRestrictedBrowser() {
+  if (!isRestricted) return; // Not restricted, no warning needed
+
+  var dismissed = false;
+  try { dismissed = sessionStorage.getItem(BW_KEY); } catch(e) {}
+
+  if (!dismissed) {
+    // Show the overlay on first load
+    showOverlay();
+    try { sessionStorage.setItem(BW_KEY, '1'); } catch(e) {}
+  } else {
+    // Already dismissed this session, show small top banner
+    showTopBanner();
+  }
+}
+
 // ==================== Profile ====================
 var profile = {};
 try { profile = JSON.parse(localStorage.getItem('gnnu_profile')) || {}; } catch(e) {}
@@ -342,15 +482,13 @@ function renderProfile() {
   }
   if (wx) {
     document.getElementById('pWx').textContent = wx;
-    document.getElementById('pTip').textContent = '👆 点击复制微信号，去微信添加好友';
   } else {
     document.getElementById('pWx').textContent = '未设置微信';
-    document.getElementById('pTip').textContent = '👆 设置后可点击复制';
   }
   document.getElementById('eName').value = name;
   document.getElementById('eWechat').value = wx;
   if (name || wx) {
-    document.getElementById('editBtn').textContent = '✏️ 修改我的信息';
+    document.getElementById('editBtn').textContent = '✏️ 修改个人信息';
   }
 }
 
@@ -376,13 +514,6 @@ function saveProfile() {
   toast('✅ 信息已保存到本机');
 }
 
-function copyWechat() {
-  var wx = profile.wechat;
-  if (!wx) { toast('⚠️ 请先点击下方设置微信号'); toggleEdit(); return; }
-  copy(wx);
-  toast('✅ 微信号已复制：' + wx + '  打开微信粘贴即可添加');
-}
-
 // ==================== Contacts ====================
 function toggleContacts() {
   var cl = document.getElementById('clist');
@@ -400,22 +531,71 @@ function call(tel) {
 
 // ==================== Utils ====================
 function go(url) {
-  var w = window.open(url, '_blank');
-  if (!w || w.closed) toast('⚠️ 弹窗被拦截，请允许后重试', 2500);
+  // In restricted browsers (Alipay/WeChat/QQ), window.open is often blocked.
+  // Strategy: try window.open first, if blocked fall back to location.href
+  // or creating a clickable anchor element.
+  if (isRestricted) {
+    // For Alipay/WeChat: prefer creating an anchor element click
+    // This is more reliable than window.open in these environments
+    var a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Fallback: if the above didn't work (stayed on same page),
+    // use location.href after a short delay
+    setTimeout(function() {
+      // If we're still here, the click might have been blocked
+      // Use location redirect as last resort
+      if (!isAlipay) {
+        // WeChat/QQ: location.href works
+        window.location.href = url;
+      }
+    }, 600);
+
+    // Also show a tip in case everything gets blocked
+    setTimeout(function() {
+      toast('💡 如未跳转，请点击右上角 ··· 选择「在浏览器中打开」后重试', 3000);
+    }, 1500);
+  } else {
+    // Normal browser: try window.open first
+    var w = window.open(url, '_blank');
+    if (!w || w.closed) {
+      // Blocked by popup blocker — fallback to anchor click
+      var a2 = document.createElement('a');
+      a2.href = url;
+      a2.target = '_blank';
+      a2.rel = 'noopener noreferrer';
+      document.body.appendChild(a2);
+      a2.click();
+      document.body.removeChild(a2);
+    }
+  }
 }
 
 function copy(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).catch(function(){});
+    navigator.clipboard.writeText(text).catch(function(){
+      fallbackCopy(text);
+    });
   } else {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta);
+    fallbackCopy(text);
   }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
 }
 
 var _tt;
@@ -430,6 +610,7 @@ function toast(msg, dur) {
 // ==================== Init ====================
 (function init() {
   renderProfile();
+  checkRestrictedBrowser();
 })();
 </script>
 </body>
