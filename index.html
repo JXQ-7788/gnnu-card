@@ -44,6 +44,8 @@ body{
 .cd:nth-child(3){animation-delay:.08s}
 .cd:nth-child(4){animation-delay:.12s}
 .cd:nth-child(5){animation-delay:.16s}
+.cd:nth-child(6){animation-delay:.20s}
+.cd:nth-child(7){animation-delay:.24s}
 .cd .tt{
   font-size:15px;font-weight:700;color:var(--g1);margin-bottom:12px;
   display:flex;align-items:center;gap:7px;
@@ -268,18 +270,59 @@ body{
     <button class="ad-copy" onclick="copy('Jing44667788');toast('✅ 已复制微信号：Jing44667788')">📋 复制</button>
   </div>
   <div style="font-size:11px;color:var(--g3);text-align:center;margin-top:10px;line-height:1.6">
-    💡 连接宿舍WiFi后点<strong>跳转认证页面</strong>，输入学号和校园网密码即可上网<br>不会操作？点击上方<strong>连接教程</strong>
+    💡 <strong>连接宿舍WiFi后</strong>点<strong>跳转认证页面</strong>，输入学号和校园网密码即可上网<br>不会操作？点击上方<strong>连接教程</strong>
   </div>
 </div>
 
 <!-- Services -->
 <div class="cd">
   <div class="tt">📱 校园服务</div>
+
+  <!-- Express Delivery (collapsible) -->
+  <div style="margin-bottom:14px">
+    <button class="bt bt2" style="margin-top:0" onclick="toggleExpress()">📦 学校快递地址（邮编：341000） ▸</button>
+    <div id="expressPanel" style="display:none;margin-top:10px">
+      <div style="font-size:12px;color:var(--g3);margin-bottom:8px">🏫 校内设有<strong>菜鸟驿站</strong>，邮寄地址为：</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--gb);border-radius:12px;padding:10px 12px">
+          <span style="font-size:12px;color:var(--g1);flex:1;line-height:1.5">江西省赣州市章贡区红旗大道61号<br><strong>赣南师范大学章贡校区</strong></span>
+          <button class="ad-copy" style="flex-shrink:0" onclick="copy('江西省赣州市章贡区红旗大道61号赣南师范大学章贡校区');toast('✅ 已复制章贡校区地址')">📋 复制</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:var(--gb);border-radius:12px;padding:10px 12px">
+          <span style="font-size:12px;color:var(--g1);flex:1;line-height:1.5">江西省赣州市蓉江新区师大南路1号<br><strong>赣南师范大学蓉江校区</strong></span>
+          <button class="ad-copy" style="flex-shrink:0" onclick="copy('江西省赣州市蓉江新区师大南路1号赣南师范大学蓉江校区');toast('✅ 已复制蓉江校区地址')">📋 复制</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:var(--gb);border-radius:12px;padding:10px 12px">
+          <span style="font-size:12px;color:var(--g1);flex:1;line-height:1.5">江西省赣州市南康区家居小镇<br><strong>赣南师范大学南康校区（家居现代产业学院）</strong></span>
+          <button class="ad-copy" style="flex-shrink:0" onclick="copy('江西省赣州市南康区家居小镇赣南师范大学南康校区（家居现代产业学院）');toast('✅ 已复制南康校区地址')">📋 复制</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Majors (collapsible) -->
+  <div style="margin-bottom:14px;border-top:1px solid rgba(0,0,0,.06);padding-top:12px">
+    <button class="bt bt2" style="margin-top:0" onclick="toggleMajors()">📋 各学院专业设置 ▾</button>
+    <div id="majorsPanel" style="display:none;margin-top:10px">
+      <img src="dd3ac01453a6443859a0ac2492ba54e8.jpg" alt="各学院专业设置" style="width:100%;border-radius:12px;display:block">
+    </div>
+  </div>
+
+  <!-- Leadership Mailbox -->
+  <div style="margin-bottom:14px;border-top:1px solid rgba(0,0,0,.06);padding-top:12px">
+    <div class="ad" style="margin-top:0">
+      <span class="ad-icon">✉️</span>
+      <div class="ad-text">
+        <strong>校领导信箱</strong><br>有问题要反映？给校领导写信
+      </div>
+      <button class="ad-copy" onclick="copy('xzxx@gnnu.edu.cn');toast('✅ 已复制校领导信箱：xzxx@gnnu.edu.cn')">📋 复制</button>
+    </div>
+  </div>
   <div class="sg">
-    <button class="sb sp" onclick="go('https://office.chaoxing.com/front/third/apps/seat/index?wfw_token=hejVCgwTrXI2Tp6Kuj7DC&fidEnc=3fb13bf8c4950ec5&uid=342272015&wfwEnc=65E50F0AD0C909C6C80B396884BE3C16&wxAppid=wxc93f4f5f6b0f4183&mappId=7990390&code=ZcLNATHf&state=30013')">
+    <button class="sb ss" onclick="go('https://office.chaoxing.com/front/third/apps/seat/index?wfw_token=hejVCgwTrXI2Tp6Kuj7DC&fidEnc=3fb13bf8c4950ec5&uid=342272015&wfwEnc=65E50F0AD0C909C6C80B396884BE3C16&wxAppid=wxc93f4f5f6b0f4183&mappId=7990390&code=ZcLNATHf&state=30013')">
       <span class="si">📚</span><span class="sl">图书馆<br>座位预约</span>
     </button>
-    <button class="sb sp" onclick="go('https://jwgl.gnnu.edu.cn/xtgl/index_initMenu.html?jsdm=xs&_t=1783792516597&echarts=1')">
+    <button class="sb ss" onclick="go('https://jwgl.gnnu.edu.cn/xtgl/index_initMenu.html?jsdm=xs&_t=1783792516597&echarts=1')">
       <span class="si">📋</span><span class="sl">教务系统<br><small style="opacity:.7">成绩·选课·课表</small></span>
     </button>
     <button class="sb ss" onclick="go('http://gnnuhwr.cloud:83/')">
@@ -315,16 +358,18 @@ body{
   </div>
   <!-- Contacts -->
   <ul class="cl" id="clist">
-    <li><span class="dept">教务处</span><span class="tel" onclick="call('0797-8898687')">0797-8898687</span></li>
-    <li><span class="dept">学生资助管理中心</span><span class="tel" onclick="call('0797-8898686')">0797-8898686</span></li>
-    <li><span class="dept">学生公寓管理中心</span><span class="tel" onclick="call('0797-8898640')">0797-8898640</span></li>
-    <li><span class="dept">保卫处</span><span class="tel" onclick="call('0797-8898682')">0797-8898682</span></li>
-    <li><span class="dept">校医院</span><span class="tel" onclick="call('0797-8898680')">0797-8898680</span></li>
-    <li><span class="dept">校医院急诊</span><span class="tel" onclick="call('0797-8898698')">0797-8898698</span></li>
+    <li><span class="dept">招生就业处</span><span class="tel" onclick="call('8393638')">8393638</span></li>
+    <li><span class="dept">党委学生工作部</span><span class="tel" onclick="call('8393636')">8393636</span></li>
+    <li><span class="dept">本科生院</span><span class="tel" onclick="call('8393687')">8393687</span></li>
+    <li><span class="dept">学生资助管理中心</span><span class="tel" onclick="call('8393685')">8393685</span></li>
+    <li><span class="dept">计划财务处</span><span class="tel" onclick="call('8393855')">8393855</span></li>
+    <li><span class="dept">学生公寓管理中心</span><span class="tel" onclick="call('8393640')">8393640</span></li>
+    <li><span class="dept">保卫处、人武部</span><span class="tel" onclick="call('8393632')">8393632 / 8393631</span></li>
+    <li><span class="dept">校医院</span><span class="tel" onclick="call('8393680')">8393680 / 8393693</span></li>
     <li><span class="dept">西苑1-9栋送水</span><span class="tel" onclick="call('18107976027')">18107976027</span></li>
     <li><span class="dept">西苑10-15栋/南苑送水</span><span class="tel" onclick="call('18107976025')">18107976025</span></li>
     <li><span class="dept">北苑送水</span><span class="tel" onclick="call('18107976019')">18107976019</span></li>
-    <li><span class="dept">校园卡/网络办理</span><span class="tel" onclick="call('17835357269')">17835357269</span></li>
+    <li><span class="dept" style="color:#e06a1f">校园卡/网络办理</span><span class="tel" style="background:linear-gradient(135deg,#fff8f0,#fff3e6);color:#e06a1f;font-weight:700;border:1px solid rgba(255,107,53,.3)" onclick="call('17835357269')">17835357269</span></li>
   </ul>
 </div>
 
@@ -362,7 +407,8 @@ body{
 <!-- Footer -->
 <div class="ft">
   📳 碰一碰NFC即可访问 · 赣南师范大学校园通行卡<br>
-  托管于 GitHub Pages · 更新文件即同步所有卡片
+  托管于 GitHub Pages · 更新文件即同步所有卡片<br>
+  💬 改进建议：<a href="mailto:3247844105@qq.com" style="color:var(--g3);text-decoration:none">3247844105@qq.com</a>
 </div>
 
 </div>
@@ -520,6 +566,26 @@ function toggleContacts() {
   cl.classList.toggle('open');
   if (cl.classList.contains('open')) {
     cl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function toggleExpress() {
+  var panel = document.getElementById('expressPanel');
+  if (panel.style.display === 'none' || panel.style.display === '') {
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function toggleMajors() {
+  var panel = document.getElementById('majorsPanel');
+  if (panel.style.display === 'none' || panel.style.display === '') {
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    panel.style.display = 'none';
   }
 }
 
