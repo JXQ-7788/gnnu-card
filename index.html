@@ -276,6 +276,292 @@ body{
 @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fd{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 </style>
+
+<script>
+// ==================== Browser Detection ====================
+var UA = navigator.userAgent || '';
+var isAlipay = /AlipayClient|AlipayDefined|APWebContainer/i.test(UA);
+var isWechat = /MicroMessenger/i.test(UA);
+var isQQ = /QQ\//i.test(UA) && !/MicroMessenger/i.test(UA);
+var isRestricted = isAlipay || isWechat || isQQ;
+
+// Restricted browser name
+function getBrowserName() {
+  if (isAlipay) return '支付宝';
+  if (isWechat) return '微信';
+  if (isQQ) return 'QQ';
+  return '';
+}
+
+// ==================== Browser Warning UI ====================
+function showTopBanner() {
+  var bn = getBrowserName();
+  var banner = document.getElementById('bwTopBanner');
+  banner.style.display = 'block';
+  banner.className = 'bw-top';
+  banner.innerHTML =
+    '<span>⚠️ 当前在<strong>' + bn + '</strong>内置浏览器中，部分功能可能受限</span>' +
+    '<span style="display:block;margin-top:4px;font-size:12px;font-weight:400">' +
+    '👉 点击右上角 ··· 选择<strong>「在浏览器中打开」</strong>即可获得完整体验</span>' +
+    '<button class="bw-top-close" onclick="dismissBanner()">×</button>';
+  // Push body content down
+  document.body.style.paddingTop = '80px';
+}
+
+function dismissBanner() {
+  var banner = document.getElementById('bwTopBanner');
+  banner.style.display = 'none';
+  document.body.style.paddingTop = '';
+}
+
+function showOverlay() {
+  var PAGE_URL = window.location.href;
+  var bn = getBrowserName();
+  var overlay = document.getElementById('bwOverlay');
+  overlay.style.display = 'block';
+  overlay.className = 'bwo';
+  overlay.innerHTML =
+    '<div class="bwb">' +
+      '<div class="bw-icon">🚀</div>' +
+      '<h3>在系统浏览器中打开</h3>' +
+      '<p>当前在<strong>' + bn + '</strong>中打开，部分功能无法正常使用。<br>建议用手机<strong>自带浏览器</strong>或<strong>Chrome/Safari</strong>打开。</p>' +
+      '<div class="bw-url">' + PAGE_URL + '</div>' +
+      '<div class="bw-btns">' +
+        '<button class="bw-btn bw-primary" onclick="copyPageUrl()">📋 复制链接</button>' +
+        '<button class="bw-btn bw-secondary" onclick="sharePage()">📤 分享给朋友</button>' +
+      '</div>' +
+      '<button class="bw-close" onclick="closeOverlay()">继续在' + bn + '中浏览（功能可能受限）</button>' +
+    '</div>';
+}
+
+function closeOverlay() {
+  document.getElementById('bwOverlay').style.display = 'none';
+  // Show top banner as persistent reminder
+  showTopBanner();
+}
+
+function copyPageUrl() {
+  copy(window.location.href);
+  toast('✅ 链接已复制！请打开手机自带浏览器（如Safari/Chrome），粘贴并访问');
+}
+
+function sharePage() {
+  var url = window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: '赣南师范大学校园通行卡', url: url }).catch(function(){});
+  } else {
+    copy(url);
+    toast('✅ 链接已复制！请发给朋友或在浏览器中打开');
+  }
+}
+
+// Ask user on first visit if in restricted browser
+var BW_KEY = 'gnnu_bw_dismissed';
+function checkRestrictedBrowser() {
+  if (!isRestricted) return; // Not restricted, no warning needed
+
+  var dismissed = false;
+  try { dismissed = sessionStorage.getItem(BW_KEY); } catch(e) {}
+
+  if (!dismissed) {
+    // Show the overlay on first load
+    showOverlay();
+    try { sessionStorage.setItem(BW_KEY, '1'); } catch(e) {}
+  } else {
+    // Already dismissed this session, show small top banner
+    showTopBanner();
+  }
+}
+
+// ==================== Profile ====================
+var profile = {};
+try { profile = JSON.parse(localStorage.getItem('gnnu_profile')) || {}; } catch(e) {}
+
+function renderProfile() {
+  var name = profile.name || '';
+  var wx = profile.wechat || '';
+  if (name) {
+    document.getElementById('pName').textContent = name;
+    document.getElementById('pAv').textContent = name.charAt(0);
+  } else {
+    document.getElementById('pName').textContent = '点击下方设置你的信息';
+    document.getElementById('pAv').textContent = '👤';
+  }
+  if (wx) {
+    document.getElementById('pWx').textContent = wx;
+  } else {
+    document.getElementById('pWx').textContent = '未设置微信';
+  }
+  document.getElementById('eName').value = name;
+  document.getElementById('eWechat').value = wx;
+  if (name || wx) {
+    document.getElementById('editBtn').textContent = '✏️ 修改个人信息';
+  }
+}
+
+function toggleEdit() {
+  var panel = document.getElementById('editPanel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    document.getElementById('eName').value = profile.name || '';
+    document.getElementById('eWechat').value = profile.wechat || '';
+    document.getElementById('eName').focus();
+  }
+}
+
+function saveProfile() {
+  var name = document.getElementById('eName').value.trim();
+  var wx = document.getElementById('eWechat').value.trim();
+  if (!name && !wx) { toast('⚠️ 请至少填写名字或微信号'); return; }
+  profile.name = name;
+  profile.wechat = wx;
+  localStorage.setItem('gnnu_profile', JSON.stringify(profile));
+  renderProfile();
+  document.getElementById('editPanel').classList.remove('open');
+  toast('✅ 信息已保存到本机');
+}
+
+// ==================== Contacts ====================
+function toggleContacts() {
+  var cl = document.getElementById('clist');
+  cl.classList.toggle('open');
+  if (cl.classList.contains('open')) {
+    cl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function toggleExpress() {
+  var panel = document.getElementById('expressPanel');
+  if (panel.style.display === 'none' || panel.style.display === '') {
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function toggleMajors() {
+  var panel = document.getElementById('majorsPanel');
+  if (panel.style.display === 'none' || panel.style.display === '') {
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function call(tel) {
+  if (confirm('拨打：' + tel + ' ？')) {
+    window.location.href = 'tel:' + tel;
+  }
+}
+
+// ==================== Utils ====================
+function go(url) {
+  // In restricted browsers (Alipay/WeChat/QQ), window.open is often blocked.
+  // Strategy: try window.open first, if blocked fall back to location.href
+  // or creating a clickable anchor element.
+  if (isRestricted) {
+    // For Alipay/WeChat: prefer creating an anchor element click
+    // This is more reliable than window.open in these environments
+    var a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Fallback: if the above didn't work (stayed on same page),
+    // use location.href after a short delay
+    setTimeout(function() {
+      // If we're still here, the click might have been blocked
+      // Use location redirect as last resort
+      if (!isAlipay) {
+        // WeChat/QQ: location.href works
+        window.location.href = url;
+      }
+    }, 600);
+
+    // Also show a tip in case everything gets blocked
+    setTimeout(function() {
+      toast('💡 如未跳转，请点击右上角 ··· 选择「在浏览器中打开」后重试', 3000);
+    }, 1500);
+  } else {
+    // Normal browser: try window.open first
+    var w = window.open(url, '_blank');
+    if (!w || w.closed) {
+      // Blocked by popup blocker — fallback to anchor click
+      var a2 = document.createElement('a');
+      a2.href = url;
+      a2.target = '_blank';
+      a2.rel = 'noopener noreferrer';
+      document.body.appendChild(a2);
+      a2.click();
+      document.body.removeChild(a2);
+    }
+  }
+}
+
+function copy(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(function(){
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+var _tt;
+function toast(msg, dur) {
+  dur = dur || 2500;
+  var t = document.getElementById('to');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(function(){ t.classList.remove('show'); }, dur);
+}
+
+function openImg(id) {
+  var el = document.getElementById(id);
+  var big = document.getElementById('qroImg');
+  var tip = document.getElementById('qroTip');
+  var sub = document.getElementById('qroSub');
+  if (!el || !big) return;
+  big.src = el.getAttribute('data-src') || el.src;
+  big.className = 'qro-img' + (el.getAttribute('data-type') === 'qr' ? ' qr' : '');
+  if (tip) tip.textContent = el.getAttribute('data-tip') || '';
+  if (sub) sub.textContent = el.getAttribute('data-sub') || '';
+  document.getElementById('qrOverlay').classList.add('show');
+}
+
+function closeImg() {
+  document.getElementById('qrOverlay').classList.remove('show');
+}
+
+// ==================== Init ====================
+function init() {
+  renderProfile();
+  checkRestrictedBrowser();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
 </head>
 <body>
 <div id="bwOverlay" style="display:none"></div>
@@ -576,285 +862,6 @@ body{
 <!-- Toast -->
 <div class="to" id="to"></div>
 
-<script>
-// ==================== Browser Detection ====================
-var UA = navigator.userAgent || '';
-var isAlipay = /AlipayClient|AlipayDefined|APWebContainer/i.test(UA);
-var isWechat = /MicroMessenger/i.test(UA);
-var isQQ = /QQ\//i.test(UA) && !/MicroMessenger/i.test(UA);
-var isRestricted = isAlipay || isWechat || isQQ;
 
-// Restricted browser name
-function getBrowserName() {
-  if (isAlipay) return '支付宝';
-  if (isWechat) return '微信';
-  if (isQQ) return 'QQ';
-  return '';
-}
-
-// ==================== Browser Warning UI ====================
-function showTopBanner() {
-  var bn = getBrowserName();
-  var banner = document.getElementById('bwTopBanner');
-  banner.style.display = 'block';
-  banner.className = 'bw-top';
-  banner.innerHTML =
-    '<span>⚠️ 当前在<strong>' + bn + '</strong>内置浏览器中，部分功能可能受限</span>' +
-    '<span style="display:block;margin-top:4px;font-size:12px;font-weight:400">' +
-    '👉 点击右上角 ··· 选择<strong>「在浏览器中打开」</strong>即可获得完整体验</span>' +
-    '<button class="bw-top-close" onclick="dismissBanner()">×</button>';
-  // Push body content down
-  document.body.style.paddingTop = '80px';
-}
-
-function dismissBanner() {
-  var banner = document.getElementById('bwTopBanner');
-  banner.style.display = 'none';
-  document.body.style.paddingTop = '';
-}
-
-function showOverlay() {
-  var PAGE_URL = window.location.href;
-  var bn = getBrowserName();
-  var overlay = document.getElementById('bwOverlay');
-  overlay.style.display = 'block';
-  overlay.className = 'bwo';
-  overlay.innerHTML =
-    '<div class="bwb">' +
-      '<div class="bw-icon">🚀</div>' +
-      '<h3>在系统浏览器中打开</h3>' +
-      '<p>当前在<strong>' + bn + '</strong>中打开，部分功能无法正常使用。<br>建议用手机<strong>自带浏览器</strong>或<strong>Chrome/Safari</strong>打开。</p>' +
-      '<div class="bw-url">' + PAGE_URL + '</div>' +
-      '<div class="bw-btns">' +
-        '<button class="bw-btn bw-primary" onclick="copyPageUrl()">📋 复制链接</button>' +
-        '<button class="bw-btn bw-secondary" onclick="sharePage()">📤 分享给朋友</button>' +
-      '</div>' +
-      '<button class="bw-close" onclick="closeOverlay()">继续在' + bn + '中浏览（功能可能受限）</button>' +
-    '</div>';
-}
-
-function closeOverlay() {
-  document.getElementById('bwOverlay').style.display = 'none';
-  // Show top banner as persistent reminder
-  showTopBanner();
-}
-
-function copyPageUrl() {
-  copy(window.location.href);
-  toast('✅ 链接已复制！请打开手机自带浏览器（如Safari/Chrome），粘贴并访问');
-}
-
-function sharePage() {
-  var url = window.location.href;
-  if (navigator.share) {
-    navigator.share({ title: '赣南师范大学校园通行卡', url: url }).catch(function(){});
-  } else {
-    copy(url);
-    toast('✅ 链接已复制！请发给朋友或在浏览器中打开');
-  }
-}
-
-// Ask user on first visit if in restricted browser
-var BW_KEY = 'gnnu_bw_dismissed';
-function checkRestrictedBrowser() {
-  if (!isRestricted) return; // Not restricted, no warning needed
-
-  var dismissed = false;
-  try { dismissed = sessionStorage.getItem(BW_KEY); } catch(e) {}
-
-  if (!dismissed) {
-    // Show the overlay on first load
-    showOverlay();
-    try { sessionStorage.setItem(BW_KEY, '1'); } catch(e) {}
-  } else {
-    // Already dismissed this session, show small top banner
-    showTopBanner();
-  }
-}
-
-// ==================== Profile ====================
-var profile = {};
-try { profile = JSON.parse(localStorage.getItem('gnnu_profile')) || {}; } catch(e) {}
-
-function renderProfile() {
-  var name = profile.name || '';
-  var wx = profile.wechat || '';
-  if (name) {
-    document.getElementById('pName').textContent = name;
-    document.getElementById('pAv').textContent = name.charAt(0);
-  } else {
-    document.getElementById('pName').textContent = '点击下方设置你的信息';
-    document.getElementById('pAv').textContent = '👤';
-  }
-  if (wx) {
-    document.getElementById('pWx').textContent = wx;
-  } else {
-    document.getElementById('pWx').textContent = '未设置微信';
-  }
-  document.getElementById('eName').value = name;
-  document.getElementById('eWechat').value = wx;
-  if (name || wx) {
-    document.getElementById('editBtn').textContent = '✏️ 修改个人信息';
-  }
-}
-
-function toggleEdit() {
-  var panel = document.getElementById('editPanel');
-  panel.classList.toggle('open');
-  if (panel.classList.contains('open')) {
-    document.getElementById('eName').value = profile.name || '';
-    document.getElementById('eWechat').value = profile.wechat || '';
-    document.getElementById('eName').focus();
-  }
-}
-
-function saveProfile() {
-  var name = document.getElementById('eName').value.trim();
-  var wx = document.getElementById('eWechat').value.trim();
-  if (!name && !wx) { toast('⚠️ 请至少填写名字或微信号'); return; }
-  profile.name = name;
-  profile.wechat = wx;
-  localStorage.setItem('gnnu_profile', JSON.stringify(profile));
-  renderProfile();
-  document.getElementById('editPanel').classList.remove('open');
-  toast('✅ 信息已保存到本机');
-}
-
-// ==================== Contacts ====================
-function toggleContacts() {
-  var cl = document.getElementById('clist');
-  cl.classList.toggle('open');
-  if (cl.classList.contains('open')) {
-    cl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-}
-
-function toggleExpress() {
-  var panel = document.getElementById('expressPanel');
-  if (panel.style.display === 'none' || panel.style.display === '') {
-    panel.style.display = 'block';
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } else {
-    panel.style.display = 'none';
-  }
-}
-
-function toggleMajors() {
-  var panel = document.getElementById('majorsPanel');
-  if (panel.style.display === 'none' || panel.style.display === '') {
-    panel.style.display = 'block';
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } else {
-    panel.style.display = 'none';
-  }
-}
-
-function call(tel) {
-  if (confirm('拨打：' + tel + ' ？')) {
-    window.location.href = 'tel:' + tel;
-  }
-}
-
-// ==================== Utils ====================
-function go(url) {
-  // In restricted browsers (Alipay/WeChat/QQ), window.open is often blocked.
-  // Strategy: try window.open first, if blocked fall back to location.href
-  // or creating a clickable anchor element.
-  if (isRestricted) {
-    // For Alipay/WeChat: prefer creating an anchor element click
-    // This is more reliable than window.open in these environments
-    var a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-    // Fallback: if the above didn't work (stayed on same page),
-    // use location.href after a short delay
-    setTimeout(function() {
-      // If we're still here, the click might have been blocked
-      // Use location redirect as last resort
-      if (!isAlipay) {
-        // WeChat/QQ: location.href works
-        window.location.href = url;
-      }
-    }, 600);
-
-    // Also show a tip in case everything gets blocked
-    setTimeout(function() {
-      toast('💡 如未跳转，请点击右上角 ··· 选择「在浏览器中打开」后重试', 3000);
-    }, 1500);
-  } else {
-    // Normal browser: try window.open first
-    var w = window.open(url, '_blank');
-    if (!w || w.closed) {
-      // Blocked by popup blocker — fallback to anchor click
-      var a2 = document.createElement('a');
-      a2.href = url;
-      a2.target = '_blank';
-      a2.rel = 'noopener noreferrer';
-      document.body.appendChild(a2);
-      a2.click();
-      document.body.removeChild(a2);
-    }
-  }
-}
-
-function copy(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).catch(function(){
-      fallbackCopy(text);
-    });
-  } else {
-    fallbackCopy(text);
-  }
-}
-
-function fallbackCopy(text) {
-  var ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  try { document.execCommand('copy'); } catch(e) {}
-  document.body.removeChild(ta);
-}
-
-var _tt;
-function toast(msg, dur) {
-  dur = dur || 2500;
-  var t = document.getElementById('to');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(_tt);
-  _tt = setTimeout(function(){ t.classList.remove('show'); }, dur);
-}
-
-function openImg(id) {
-  var el = document.getElementById(id);
-  var big = document.getElementById('qroImg');
-  var tip = document.getElementById('qroTip');
-  var sub = document.getElementById('qroSub');
-  if (!el || !big) return;
-  big.src = el.getAttribute('data-src') || el.src;
-  big.className = 'qro-img' + (el.getAttribute('data-type') === 'qr' ? ' qr' : '');
-  if (tip) tip.textContent = el.getAttribute('data-tip') || '';
-  if (sub) sub.textContent = el.getAttribute('data-sub') || '';
-  document.getElementById('qrOverlay').classList.add('show');
-}
-
-function closeImg() {
-  document.getElementById('qrOverlay').classList.remove('show');
-}
-
-// ==================== Init ====================
-(function init() {
-  renderProfile();
-  checkRestrictedBrowser();
-})();
-</script>
 </body>
 </html>
